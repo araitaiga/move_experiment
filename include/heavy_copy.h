@@ -65,12 +65,12 @@ public:
 
   // array全体のmoveの際はFugaのmove constructorが呼ばれる
   // move constructor内でstd::stringのmove constructorを呼ぶ
-  HeavyCopyMove(HeavyCopyMove && rhs) : str(std::move(rhs.str))
+  HeavyCopyMove(HeavyCopyMove && rhs) noexcept : str(std::move(rhs.str))
   {
     std::cout << "HeavyCopyMove start move " << rhs.str << std::endl;
     std::cout << "HeavyCopyMove moved" << std::endl;
   }
-  HeavyCopyMove & operator=(HeavyCopyMove && rhs)
+  HeavyCopyMove & operator=(HeavyCopyMove && rhs) noexcept
   {
     std::cout << "operator::HeavyCopyMove start move " << rhs.str << std::endl;
     std::cout << "operator::HeavyCopyMove moved" << std::endl;

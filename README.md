@@ -84,6 +84,15 @@ public:
 
 ```
 
+以下すべての条件を満たす場合、ムーブ代入演算子と共に自動生成される  
+
+- クラスがコピー演算を宣言していない  
+- クラスがムーブ演算を宣言していない  
+- クラスがデストラクタを宣言していない  
+
+<https://cpprefjp.github.io/lang/cpp11/rvalue_ref_and_move_semantics.html>  
+<https://theolizer.com/cpp-school1/cpp-school1-36/>
+
 ## 右辺値と左辺値
 
 <https://cpprefjp.github.io/lang/cpp11/rvalue_ref_and_move_semantics.html>
@@ -206,9 +215,38 @@ copy. ムーブコンストラクタが定義されていないので, 右辺値
 ## ムーブのつかいどころ
 
 <https://theolizer.com/cpp-school1/cpp-school1-37/>  
+要約
 > RAIIパターンのクラス(リソースの確保と値の初期化を同時に行うもの. unique_ptrなど) はコピー不可能. ムーブを使えばstd::vectorで管理できるようになる  
 
 > 所有権が一つのオブジェクトにのみ割り当てられるようなクラス（ファイルをオープンしたときのハンドラ, unique_ptrなど）をムーブ対応しておく（ムーブコンストラクタを書いておく）と、必要なときに所有権を移動できて便利
+
+std::vectorでムーブ可能なオブジェクト
+
+```cpp
+
+int main()
+{
+  // HeavyCopyのコピーコンストラクタが3回呼ばれる
+  std::vector<HeavyCopy> hoge_copy1{HeavyCopy("1"), HeavyCopy("2"), HeavyCopy("3")};
+
+  // HeavyCopyはムーブコンストラクタを持たない
+  // メモリの再確保が発生するため, コピーコンストラクタが呼ばれる
+  std::vector<HeavyCopy> hoge_copy2;
+  hoge_copy2.emplace_back("1");
+  hoge_copy2.emplace_back("2");
+  hoge_copy2.emplace_back("3");
+
+  // HeavyCopyMoveはnoexceptなムーブコンストラクタを持つ
+  // メモリの再確保の際にムーブコンストラクタが呼ばれる
+  // https://qiita.com/kei10in/items/00f65e68a3d08093aceb
+  std::vector<HeavyCopyMove> hoge_copy3;
+  hoge_copy3.emplace_back("1");
+  hoge_copy3.emplace_back("2");
+  hoge_copy3.emplace_back("3");
+
+  return 0;
+}
+```
 
 ---
 
