@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
-# プロジェクト名と使用する言語を指定
 project(move_experiment LANGUAGES CXX)
 
-# 実行ファイルを生成
 add_executable(move_experiment src/move_experiment.cpp)
+add_executable(move_example src/move_example.cpp)
+add_executable(move_example2 src/move_example2.cpp)
