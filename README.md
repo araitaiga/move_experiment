@@ -204,6 +204,7 @@ copy. ムーブコンストラクタが定義されていないので, 右辺値
 </br>
 
 ## ムーブのつかいどころ
+
 <https://theolizer.com/cpp-school1/cpp-school1-37/>  
 > RAIIパターンのクラス(リソースの確保と値の初期化を同時に行うもの. unique_ptrなど) はコピー不可能. ムーブを使えばstd::vectorで管理できるようになる  
 
