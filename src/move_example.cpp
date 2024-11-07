@@ -11,7 +11,7 @@ private:
   // Copyに時間のかかるクラス
 public:
   explicit Fuga(const size_t i) : i(i) { std::cout << "Fuga created " << i << std::endl; };
-  Fuga(const Fuga & ref) : i(ref.i)
+  Fuga(const Fuga & rhs) : i(rhs.i)
   {
     std::cout << "Fuga start copy\n";
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -32,31 +32,31 @@ public:
   };
 
   // copy constructor
-  FugaContainer(const FugaContainer & ref) : fuga_ptr(std::make_unique<Fuga>(*ref.fuga_ptr))
+  FugaContainer(const FugaContainer & rhs) : fuga_ptr(std::make_unique<Fuga>(*rhs.fuga_ptr))
   {
     std::cout << "FugaContainer start copy. wait...\n";
     std::cout << "FugaContainer copied\n";
   }
   // move constructor
-  FugaContainer(FugaContainer && ref) : fuga_ptr(std::move(ref.fuga_ptr))
+  FugaContainer(FugaContainer && rhs) : fuga_ptr(std::move(rhs.fuga_ptr))
   {
     std::cout << "FugaContainer start move\n";
     std::cout << "FugaContainer moved\n";
   }
 
   // copy assignment operator
-  FugaContainer & operator=(const FugaContainer & ref)
+  FugaContainer & operator=(const FugaContainer & rhs)
   {
     std::cout << "assignment::FugaContainer start copy. wait...\n";
-    fuga_ptr = std::make_unique<Fuga>(*ref.fuga_ptr);
+    fuga_ptr = std::make_unique<Fuga>(*rhs.fuga_ptr);
     std::cout << "assignment::FugaContainer assignment copied\n";
     return *this;
   }
   // move assignment operator
-  FugaContainer & operator=(FugaContainer && ref)
+  FugaContainer & operator=(FugaContainer && rhs)
   {
     std::cout << "assignment::FugaContainer start move\n";
-    fuga_ptr = std::move(ref.fuga_ptr);
+    fuga_ptr = std::move(rhs.fuga_ptr);
     std::cout << "assignment::FugaContainer moved\n";
     return *this;
   }

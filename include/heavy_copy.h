@@ -17,18 +17,18 @@ public:
   {
     std::cout << "HeavyCopy created " << str << std::endl;
   };
-  HeavyCopy(const HeavyCopy & ref) : str(ref.str)
+  HeavyCopy(const HeavyCopy & rhs) : str(rhs.str)
   {
-    std::cout << "HeavyCopy start copy " << ref.str << std::endl;
+    std::cout << "HeavyCopy start copy " << rhs.str << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "HeavyCopy copied" << std::endl;
   }
-  HeavyCopy & operator=(const HeavyCopy & ref)
+  HeavyCopy & operator=(const HeavyCopy & rhs)
   {
-    std::cout << "operator::HeavyCopy start copy " << ref.str << std::endl;
+    std::cout << "operator::HeavyCopy start copy " << rhs.str << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "operator::HeavyCopy copied" << std::endl;
-    str = ref.str;
+    str = rhs.str;
     return *this;
   }
 
@@ -48,33 +48,33 @@ public:
   {
     std::cout << "HeavyCopyMove created " << str << std::endl;
   };
-  HeavyCopyMove(const HeavyCopyMove & ref) : str(ref.str)
+  HeavyCopyMove(const HeavyCopyMove & rhs) : str(rhs.str)
   {
-    std::cout << "HeavyCopyMove start copy " << ref.str << std::endl;
+    std::cout << "HeavyCopyMove start copy " << rhs.str << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "HeavyCopyMove copied" << std::endl;
   }
-  HeavyCopyMove & operator=(const HeavyCopyMove & ref)
+  HeavyCopyMove & operator=(const HeavyCopyMove & rhs)
   {
-    std::cout << "operator::HeavyCopyMove start copy " << ref.str << std::endl;
+    std::cout << "operator::HeavyCopyMove start copy " << rhs.str << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "operator::HeavyCopyMove copied" << std::endl;
-    str = ref.str;
+    str = rhs.str;
     return *this;
   }
 
   // array全体のmoveの際はFugaのmove constructorが呼ばれる
   // move constructor内でstd::stringのmove constructorを呼ぶ
-  HeavyCopyMove(HeavyCopyMove && ref) : str(std::move(ref.str))
+  HeavyCopyMove(HeavyCopyMove && rhs) : str(std::move(rhs.str))
   {
-    std::cout << "HeavyCopyMove start move " << ref.str << std::endl;
+    std::cout << "HeavyCopyMove start move " << rhs.str << std::endl;
     std::cout << "HeavyCopyMove moved" << std::endl;
   }
-  HeavyCopyMove & operator=(HeavyCopyMove && ref)
+  HeavyCopyMove & operator=(HeavyCopyMove && rhs)
   {
-    std::cout << "operator::HeavyCopyMove start move " << ref.str << std::endl;
+    std::cout << "operator::HeavyCopyMove start move " << rhs.str << std::endl;
     std::cout << "operator::HeavyCopyMove moved" << std::endl;
-    str = std::move(ref.str);
+    str = std::move(rhs.str);
     return *this;
   }
 

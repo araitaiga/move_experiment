@@ -56,10 +56,10 @@ int main()
 ```cpp
 class HeavyCopy{
   char * ptr;
-  HeavyCopy(const HeavyCopy & ref)
+  HeavyCopy(const HeavyCopy & rhs)
   {
     ptr = new char[1000] ;
-    std::copy(ref.ptr, ref.ptr + 1000, ptr);
+    std::copy(rhs.ptr, rhs.ptr + 1000, ptr);
   }
 };
 ```
@@ -73,11 +73,11 @@ class HeavyCopy{
 class HeavyCopyMove{
   char * ptr;
 public:
-  HeavyCopyMove(HeavyCopyMove && ref)
+  HeavyCopyMove(HeavyCopyMove && rhs)
   {
     // ポインタだけコピーする
-    ptr = ref.ptr;
-    ref.ptr = nullptr;
+    ptr = rhs.ptr;
+    rhs.ptr = nullptr;
     return *this;
   }
 };
@@ -176,9 +176,9 @@ public:
   {
     std::cout << "HeavyCopy created " << str << std::endl;
   };
-  HeavyCopy(const HeavyCopy & ref) : str(ref.str)
+  HeavyCopy(const HeavyCopy & rhs) : str(rhs.str)
   {
-    std::cout << "HeavyCopy start copy " << ref.str << std::endl;
+    std::cout << "HeavyCopy start copy " << rhs.str << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "HeavyCopy copied" << std::endl;
   }
