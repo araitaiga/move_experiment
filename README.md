@@ -224,7 +224,7 @@ copy. ムーブコンストラクタが定義されていないので, 右辺値
   - > 所有権が一つのオブジェクトにのみ割り当てられるようなクラス（ファイルをオープンしたときのハンドラ, unique_ptrなど）をムーブ対応しておく（ムーブコンストラクタを書いておく）と、必要なときに所有権を移動できて便利
 
 ムーブ演算を持つクラスはstd::vectorで管理してメモリの再確保が行われた際にコピーではなくムーブされるのでお得
-  
+
 ```cpp
 
 int main()
@@ -249,6 +249,22 @@ int main()
 
   return 0;
 }
+```
+
+std::vectorのような, リソースを受け取って管理するクラスを自作する際にムーブが必要  
+<https://cpprefjp.github.io/reference/vector/vector/push_back.html>  
+
+std::vector::push_backでも右辺値参照引数でオーバーロードされている  
+```cpp
+void push_back(const T& x);           // (1) C++03
+void push_back(T&& x);                // (2) C++11
+```
+
+```cpp
+HeavyCopyMove heavy_copy_move("4");
+std::vector<HeavyCopyMove> hoge_copy4;
+// push_backでもmoveコンストラクタが呼ばれる
+hoge_copy4.push_back(std::move(heavy_copy_move));
 ```
 
 ---

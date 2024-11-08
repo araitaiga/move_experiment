@@ -27,6 +27,12 @@ int main()
   hoge_copy3.emplace_back("2");
   hoge_copy3.emplace_back("3");
 
+  HeavyCopyMove heavy_copy_move("4");
+  std::vector<HeavyCopyMove> hoge_copy4;
+  // push_backでもmoveコンストラクタが呼ばれる
+  // https://cpprefjp.github.io/reference/vector/vector/push_back.html
+  hoge_copy4.push_back(std::move(heavy_copy_move));
+
   std::cout << "=====Create Base Object===== \n";
   std::vector<HeavyCopy> hoge;
   hoge.reserve(3);
