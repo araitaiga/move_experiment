@@ -12,6 +12,7 @@ set(SRC_LIST
   src/rvalue_function.cpp
   src/move_experiment.cpp
   src/move_example.cpp
+  src/auto_generated_member.cpp
 )
 
 include_directories(include)

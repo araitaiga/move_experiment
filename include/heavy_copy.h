@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include <iostream>
+#include <map>
 #include <thread>
 #include <utility>
 #include <vector>
@@ -79,4 +80,30 @@ public:
   }
 
   std::string get() { return str; }
+};
+
+class MoveConstructorDeleted
+{
+  // 自動生成されるコピーコンストラクタが削除されたクラス
+private:
+  std::map<std::string, HeavyCopyMove> map;
+
+public:
+  MoveConstructorDeleted() { std::cout << "CopyConstructorDeleted Constructor" << std::endl; };
+
+  // 1. デストラクタ, コピーコンストラクタ, コピー代入演算子は三位一体で定義すべき
+  // 2. 上記のうち一つでも定義された場合, ムーブコンストラクタ, ムーブ代入演算子は自動生成されない
+  // デストラクタを定義した場合, 過去の経緯からコピーコンストラクタ, コピー代入演算子は自動生成されるため,
+  // このクラスをムーブしようとしてもコンパイルエラーにならずコピーされる
+  ~MoveConstructorDeleted() { std::cout << "CopyConstructorDeleted Destructor" << std::endl; };
+
+  // コピー演算は自動生成される
+  // MoveConstructorDeleted(const MoveConstructorDeleted & rhs) = delete;
+  // MoveConstructorDeleted & operator=(const MoveConstructorDeleted & rhs) = delete;
+
+  // ムーブ演算は自動生成されない
+  // MoveConstructorDeleted(MoveConstructorDeleted && rhs) = default;
+  // MoveConstructorDeleted & operator=(MoveConstructorDeleted && rhs) = default;
+
+  void addMap(std::string key, HeavyCopyMove && value) { map[key] = std::move(value); }
 };
