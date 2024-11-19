@@ -13,6 +13,7 @@ set(SRC_LIST
   src/move_experiment.cpp
   src/move_example.cpp
   src/auto_generated_member.cpp
+  src/forward.cpp
 )
 
 include_directories(include)

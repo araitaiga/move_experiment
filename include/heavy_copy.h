@@ -105,5 +105,11 @@ public:
   // MoveConstructorDeleted(MoveConstructorDeleted && rhs) = default;
   // MoveConstructorDeleted & operator=(MoveConstructorDeleted && rhs) = default;
 
-  void addMap(std::string key, HeavyCopyMove && value) { map[key] = std::move(value); }
+  // void addMap(std::string key, HeavyCopyMove && value) { map[key] = std::move(value); }
+
+  template <typename T>
+  void addMap(std::string key, T && value)
+  {
+    map[key] = std::forward<T>(value);
+  }
 };
