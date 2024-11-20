@@ -32,8 +32,6 @@ int main()
   std::cout << "=====MoveConstructor is Deleted===== \n";
   MoveConstructorDeleted move_deleted_container;
   move_deleted_container.addMap("key1", HeavyCopyMove("1"));
-  move_deleted_container.addMap("key2", HeavyCopyMove("2"));
-  move_deleted_container.addMap("key3", HeavyCopyMove("3"));
 
   std::cout << "=====Copy===== \n";
   // コピーされる

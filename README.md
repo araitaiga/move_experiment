@@ -22,7 +22,7 @@ int main()
 
 <details>
 <summary>正解</summary>
-6回. hogeの初期化で3回, fugaへのコピーで3回.
+6回. hogeの初期化で3回, fugaのコピーコンストラクタ内で更に3回コピー.
 </details>
 
 </br>
@@ -44,10 +44,14 @@ int main()
 
 <details>
 <summary>正解</summary>
-0回. move!
+0回. move! fugaはvectorのムーブコンストラクタで構築される. vectorが管理する要素へのポインタをコピーするだけなのでHeavyCopyのコピーコンストラクタは呼ばれない
 </details>
 
 </br>
+
+![vector_copy](./images/vector_copy.png)
+
+例: [vector.cpp](./src/vector.cpp)
 
 ## コピーコンストラクタ
 
@@ -85,11 +89,7 @@ public:
 
 ```
 
-以下すべての条件を満たす場合、ムーブ代入演算子と共に自動生成される  
-
-- クラスがコピー演算を宣言していない  
-- クラスがムーブ演算を宣言していない  
-- クラスがデストラクタを宣言していない  
+例: [heavy_copy.cpp](./include/heavy_copy.h)
 
 <https://cpprefjp.github.io/lang/cpp11/rvalue_ref_and_move_semantics.html>  
 <https://theolizer.com/cpp-school1/cpp-school1-36/>
@@ -119,7 +119,7 @@ int main()
 ## 右辺値参照
 
 ```T&&```. 右辺値のみを束縛する参照.  一方```T&```は左辺値参照.  
-**関数やコンストラクタが, 受け取った引数が右辺値か左辺値かを区別するためのフラグとして用いられる**
+**受け取った実引数が右辺値だったか左辺値だったかを, 関数やコンストラクタが区別するためのフラグとして用いられる**
 
 ```cpp
 void operateHeavyCopyMove(HeavyCopyMove && obj)
@@ -151,10 +151,12 @@ int main()
 右辺値は一時オブジェクトのため自由に破棄して良く, 左辺値はそうではない.  
 --> 関数やコンストラクタ側がムーブにより所有権を奪うためには右辺値が必要.  
 
+例: [rvalue_function.cpp](./src/rvalue_function.cpp)
+
 ## ムーブ
 
 std::move(X)は実際には**ムーブしない**. 左辺値Xを右辺値にキャストするだけ.  
-実際のムーブはムーブコンストラクタ, ムーブ代入演算子により行われる.  
+実際のムーブ(所有権の移動)はムーブコンストラクタ, ムーブ代入演算子により行われる.  
 
 ```cpp
 int main()
@@ -244,7 +246,9 @@ int main()
 
 </br>
 
-特殊メンバ関数  
+例: [auto_generated_member.cpp](./src/auto_generated_member.cpp)
+
+特殊メンバ関数は以下  
 
 - コンストラクタ  
 - デストラクタ  
@@ -263,6 +267,7 @@ int main()
 - std::vectorのような, リソースを受け取って管理するクラスを自作する際に, 右辺値を渡してムーブで所有権を移動できると, 計算量を減らせる  
 <https://cpprefjp.github.io/reference/vector/vector/push_back.html>  
 std::vector::push_backでも右辺値参照引数でオーバーロードされている  
+
 ```cpp
 void push_back(const T& x);           // (1) C++03
 void push_back(T&& x);                // (2) C++11
@@ -276,6 +281,7 @@ hoge_copy4.push_back(std::move(heavy_copy_move));
 ```
 
 - ムーブ演算を持つクラスはstd::vectorで管理してメモリの再確保が行われた際にコピーではなくムーブされるのでお得
+
 ```cpp
 
 int main()
@@ -302,13 +308,15 @@ int main()
 }
 ```
 
+![vector_allocate](./images/vector_allocate.png)
+
+その他  
 - <https://theolizer.com/cpp-school1/cpp-school1-37/>  
   - 要約
   - > RAIIパターンのクラス(リソースの確保と値の初期化を同時に行うもの. unique_ptrなど) はコピー不可能. ムーブを使えばstd::vectorで管理できるようになる  
   - > 所有権が一つのオブジェクトにのみ割り当てられるようなクラス（ファイルをオープンしたときのハンドラ, unique_ptrなど）をムーブ対応しておく（ムーブコンストラクタを書いておく）と、必要なときに所有権を移動できて便利
 
 - <https://theolizer.com/cpp-school1/cpp-school1-36/>  
-  - > 通常通りクラス型の変数を定義する際に、例えば他の関数の戻り値と同じものをコンストラクトする時が典型的な使い方と思います。関数の戻り値ですから一時オブジェクト（右辺値）となるため、その文が終わると解放されます。ならば、折角、関数で作られたデータをなるべく有効活用するため、ムーブしたいです。  
   - memo: RVOと矛盾...?  
 
 ---
@@ -379,4 +387,8 @@ public:
 
 ```
 
+例: [forward.cpp](./src/forward.cpp)
+
 ## RVO
+
+例: [rvo.cpp](./src/rvo.cpp)

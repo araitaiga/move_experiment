@@ -10,7 +10,6 @@ set(SRC_LIST
   src/array.cpp
   src/receive_object.cpp
   src/rvalue_function.cpp
-  src/move_example.cpp
   src/auto_generated_member.cpp
   src/forward.cpp
   src/rvo.cpp
