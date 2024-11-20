@@ -7,6 +7,7 @@ main関数ではHeavyCopyのコピーコンストラクタは何回呼ばれる?
 ```cpp
 class HeavyCopy
 {
+  // HeavyCopyはムーブコンストラクタを持たない
   HeavyCopy(std::string str);
 ...
 };
@@ -212,19 +213,69 @@ copy. ムーブコンストラクタが定義されていないので, 右辺値
 
 </br>
 
+以下の例で, ```Hoge hoge2 = std::move(hoge1);```でメンバであるmapはムーブ？コピー？  
+
+```cpp
+class Hoge
+{
+private:
+  std::map<std::string, HeavyCopyMove> map;
+
+public:
+  ~Hoge() { std::cout << "Hoge Destructor" << std::endl; };
+  void addMap(std::string key, HeavyCopyMove && value) { map[key] = std::move(value); }
+};
+
+int main()
+{
+  Hoge hoge1;
+  hoge1.addMap("key1", HeavyCopyMove("1"));
+  Hoge hoge2 = std::move(hoge1);
+  return 0;
+}
+
+
+```
+
+<details>
+<summary>正解</summary>
+コピー. Hogeクラスのムーブ代入演算子が自動生成されないのでコピー代入される  
+</details>
+
+</br>
+
+特殊メンバ関数  
+
+- コンストラクタ  
+- デストラクタ  
+- コピーコンストラクタ/コピー代入演算子  
+- ムーブコンストラクタ/ムーブ代入演算子  
+
+ユーザー宣言のデストラクタを持つクラスではムーブ演算を自動生成生成しない  
+ムーブ演算が自動生成されるのは以下３つの条件がすべて真の場合  
+
+- クラスがコピー演算を宣言していない  
+- ムーブ演算を宣言していない  
+- デストラクタを宣言していない  
+
 ## ムーブのつかいどころ
 
-- <https://theolizer.com/cpp-school1/cpp-school1-36/>  
-  - > 通常通りクラス型の変数を定義する際に、例えば他の関数の戻り値と同じものをコンストラクトする時が典型的な使い方と思います。関数の戻り値ですから一時オブジェクト（右辺値）となるため、その文が終わると解放されます。ならば、折角、関数で作られたデータをなるべく有効活用するため、ムーブしたいです。  
-  - memo: RVOと矛盾...?  
+- std::vectorのような, リソースを受け取って管理するクラスを自作する際に, 右辺値を渡してムーブで所有権を移動できると, 計算量を減らせる  
+<https://cpprefjp.github.io/reference/vector/vector/push_back.html>  
+std::vector::push_backでも右辺値参照引数でオーバーロードされている  
+```cpp
+void push_back(const T& x);           // (1) C++03
+void push_back(T&& x);                // (2) C++11
+```
 
-- <https://theolizer.com/cpp-school1/cpp-school1-37/>  
-  - 要約
-  - > RAIIパターンのクラス(リソースの確保と値の初期化を同時に行うもの. unique_ptrなど) はコピー不可能. ムーブを使えばstd::vectorで管理できるようになる  
-  - > 所有権が一つのオブジェクトにのみ割り当てられるようなクラス（ファイルをオープンしたときのハンドラ, unique_ptrなど）をムーブ対応しておく（ムーブコンストラクタを書いておく）と、必要なときに所有権を移動できて便利
+```cpp
+HeavyCopyMove heavy_copy_move("4");
+std::vector<HeavyCopyMove> hoge_copy4;
+// push_backでもmoveコンストラクタが呼ばれる
+hoge_copy4.push_back(std::move(heavy_copy_move));
+```
 
-ムーブ演算を持つクラスはstd::vectorで管理してメモリの再確保が行われた際にコピーではなくムーブされるのでお得
-
+- ムーブ演算を持つクラスはstd::vectorで管理してメモリの再確保が行われた際にコピーではなくムーブされるのでお得
 ```cpp
 
 int main()
@@ -251,27 +302,81 @@ int main()
 }
 ```
 
-std::vectorのような, リソースを受け取って管理するクラスを自作する際にムーブが必要  
-<https://cpprefjp.github.io/reference/vector/vector/push_back.html>  
+- <https://theolizer.com/cpp-school1/cpp-school1-37/>  
+  - 要約
+  - > RAIIパターンのクラス(リソースの確保と値の初期化を同時に行うもの. unique_ptrなど) はコピー不可能. ムーブを使えばstd::vectorで管理できるようになる  
+  - > 所有権が一つのオブジェクトにのみ割り当てられるようなクラス（ファイルをオープンしたときのハンドラ, unique_ptrなど）をムーブ対応しておく（ムーブコンストラクタを書いておく）と、必要なときに所有権を移動できて便利
 
-std::vector::push_backでも右辺値参照引数でオーバーロードされている  
-```cpp
-void push_back(const T& x);           // (1) C++03
-void push_back(T&& x);                // (2) C++11
-```
-
-```cpp
-HeavyCopyMove heavy_copy_move("4");
-std::vector<HeavyCopyMove> hoge_copy4;
-// push_backでもmoveコンストラクタが呼ばれる
-hoge_copy4.push_back(std::move(heavy_copy_move));
-```
+- <https://theolizer.com/cpp-school1/cpp-school1-36/>  
+  - > 通常通りクラス型の変数を定義する際に、例えば他の関数の戻り値と同じものをコンストラクトする時が典型的な使い方と思います。関数の戻り値ですから一時オブジェクト（右辺値）となるため、その文が終わると解放されます。ならば、折角、関数で作られたデータをなるべく有効活用するため、ムーブしたいです。  
+  - memo: RVOと矛盾...?  
 
 ---
-## 自動生成される特殊メンバ関数
-コンストラクタ, デストラクタ, コピーコンストラクタ/コピー代入演算子, ムーブコンストラクタ/ムーブ代入演算子と共に自動生成される
-
-
-## RVO
 
 ## std::forwardと完全転送
+
+std::move()は引数を無条件に右辺値へキャストするものだったが, std::forwardは条件付きで右辺値へキャストする  
+std::forwardの実引数が左辺値で初期化されたものの場合は左辺値のままとし, 右辺値で初期化されたものの場合は右辺値にキャストする  
+
+```cpp
+class ForwardSample
+{
+private:
+  std::vector<HeavyCopyMove> vec;
+  std::vector<HeavyCopyMove> vec2;
+
+public:
+  ForwardSample()
+  {
+    std::cout << "ForwardSample Constructor" << std::endl;
+    vec.reserve(100);
+    vec2.reserve(100);
+  };
+
+  // 4種類のオーバーロードが必要?
+  void add(HeavyCopyMove && value, HeavyCopyMove && value2)
+  {
+    std::cout << "add(HeavyCopyMove && value, HeavyCopyMove && value2)\n";
+    vec.push_back(std::move(value));
+    vec2.push_back(std::move(value2));
+  }
+  void add(const HeavyCopyMove & value, const HeavyCopyMove & value2)
+  {
+    std::cout << "add(const HeavyCopyMove & value, const HeavyCopyMove & value2)\n";
+    vec.push_back(value);
+    vec2.push_back(value2);
+  }
+  // 以下２つは無くてもコンパイルエラーにならないが, 上のconst LValueの定義が呼ばれるため適切にムーブされずコピーになる
+  void add(HeavyCopyMove && value, const HeavyCopyMove & value2)
+  {
+    std::cout << "add(HeavyCopyMove && value, const HeavyCopyMove & value2)\n";
+    vec.push_back(std::move(value));
+    vec2.push_back(value2);
+  }
+  void add(const HeavyCopyMove & value, HeavyCopyMove && value2)
+  {
+    std::cout << "add(const HeavyCopyMove & value, HeavyCopyMove && value2)\n";
+    vec.push_back(value);
+    vec2.push_back(std::move(value2));
+  }
+};
+
+```
+
+```cpp
+class ForwardSample
+{
+public:
+  // テンプレートとforwardを使うと一つの関数定義でOK
+  // 引数は(右,右), (左,右), (右,左), (左,左)の4パターンあるが, 適切にムーブ/コピーされる
+  template <typename T, typename U>
+  void add(T && value, U && value2)
+  {
+    vec.push_back(std::forward<T>(value));
+    vec2.push_back(std::forward<U>(value2));
+  }
+};
+
+```
+
+## RVO
