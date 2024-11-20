@@ -44,14 +44,15 @@ int main()
 
 <details>
 <summary>正解</summary>
-0回. move! fugaはvectorのムーブコンストラクタで構築される. vectorが管理する要素へのポインタをコピーするだけなのでHeavyCopyのコピーコンストラクタは呼ばれない
+0回. move! fugaはvectorのムーブコンストラクタで構築される. vectorが管理する要素へのポインタをコピーするだけなのでHeavyCopyのコピーコンストラクタは呼ばれない  
+
+![vector_copy](./images/vector_copy.png)  
 </details>
 
 </br>
 
-![vector_copy](./images/vector_copy.png)
 
-例: [vector.cpp](./src/vector.cpp)
+例: [vector.cpp](./src/vector.cpp)  
 
 ## コピーコンストラクタ
 
