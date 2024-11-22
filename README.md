@@ -22,7 +22,7 @@ int main()
 
 <details>
 <summary>正解</summary>
-6回. hogeの初期化で3回, fugaのコピーコンストラクタ内で更に3回コピー.
+6回. hogeの初期化で3回(HeavyCopyはムーブコンストラクタを持たず, コピーされる), fugaのコピーコンストラクタ内で更に3回コピー.
 </details>
 
 </br>
