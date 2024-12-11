@@ -188,7 +188,7 @@ public:
   explicit HeavyCopy(const std::string str) : str(str)
   {
     std::cout << "HeavyCopy created " << str << std::endl;
-  };
+  }
   HeavyCopy(const HeavyCopy & rhs) : str(rhs.str)
   {
     std::cout << "HeavyCopy start copy " << rhs.str << std::endl;
